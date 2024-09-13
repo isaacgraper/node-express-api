@@ -9,14 +9,15 @@ datasource db {
 
 // database schema
 model User {
-  id        Int       @id @default(autoincrement())
-  username  String    @db.VarChar(255)
-  email     String    @unique
-  password  String    @unique
-  active    Boolean?  @default(dbgenerated("Y"))
-  updatedAt DateTime  @updatedAt
-  createdAt DateTime  @default(now())
+  id        Int        @id @default(autoincrement())
+  username  String     @db.VarChar(255)
+  email     String     @unique
+  password  String
+  active Boolean    @default(true)
+  updatedAt DateTime   @updatedAt
+  createdAt DateTime   @default(now())
   document  Document[]
+  role      Role[]
 }
 
 model Document {
@@ -25,22 +26,24 @@ model Document {
   url     String?
   content Bytes?
 
-  userId Int  @unique
   user   User @relation(fields: [userId], references: [id])
+  userId Int  
 
   updatedAt DateTime @updatedAt
   createdAt DateTime @default(now())
 }
 
 model Role {
-  id Int @id @default(autoincrement())
-  role_name String 
+  id          Int          @id @default(autoincrement())
+  role_name   String
   permissions Permission[]
+
+  user   User @relation(fields: [userId], references: [id])
+  userId Int  
 }
 
 model Permission {
-  id Int @id @default(autoincrement())
+  id              Int    @id @default(autoincrement())
   permission_name String
-  roles Role[]
+  roles           Role[]
 }
-
